@@ -27,8 +27,17 @@ jobs:
         run: |
           curl -X POST https://semgrep.dev/api/v1/deployments/algrep_incorporated/projects/grepJuice/tags \
             -H "Content-Type: application/json" \
+            --header 'Authorization: Bearer ${{ secrets.SEMGREP_APP_TOKEN }} \
             -d '{"tags": [ "release1234" ]}'
-
-          curl -X POST https://example.com/webhook2 \
-            -H "Content-Type: application/json" \
-            -d '{"message": "Second webhook triggered"}'
+          curl --location 'https://semgrep.dev/api/sca/deployments/$DEPLOYMENT_ID/sbom_async' \
+          --header 'Content-Type: application/json' \
+          --header 'Authorization: Bearer ${{ secrets.SEMGREP_APP_TOKEN }}' \
+          --data '{
+              "repositoryId": $REPO_ID,
+              "formatVersion": {
+                  "format": "SBOM_FORMAT_CYCLONEDX",
+                  "version": "1.4"
+              },
+              "metadataComponentType": "SBOM_METADATA_COMPONENT_TYPE_CYCLONE_DX_V15_APPLICATION",
+              "sbomOutputFormat": "SBOM_OUTPUT_FORMAT_JSON",
+          }'
