@@ -21,4 +21,14 @@ jobs:
     if: (github.actor != 'dependabot[bot]')
     steps:
       - uses: actions/checkout@v3
-      - run: semgrep ci
+      - name: Run Semgrep CI
+        run: semgrep ci --semgrep-repo-display-name=grepJuice
+      - name: Run Curl Commands
+        run: |
+          curl -X POST https://semgrep.dev/api/v1/deployments/algrep_incorporated/projects/grepJuice/tags \
+            -H "Content-Type: application/json" \
+            -d '{"tags": [ "release1234" ]}'
+
+          curl -X POST https://example.com/webhook2 \
+            -H "Content-Type: application/json" \
+            -d '{"message": "Second webhook triggered"}'
